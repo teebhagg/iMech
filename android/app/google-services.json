@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_number": "700419981635",
+    "firebase_url": "https://the-mechanic-47aec-default-rtdb.firebaseio.com",
+    "project_id": "the-mechanic-47aec",
+    "storage_bucket": "the-mechanic-47aec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700419981635:android:a0a5fb1f0cdab077766ff6",
+        "android_client_info": {
+          "package_name": "com.example.auto__"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "700419981635-22snnkuqa1kp69q5jvvuafb7rnhcffk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR4FSxfzX0DIfxJkyPraoMSIQTQ1jer4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700419981635-22snnkuqa1kp69q5jvvuafb7rnhcffk5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "700419981635-ee6lgglle17ilk2bk0tlbkosscgb8kk6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "car.mechanic.the"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700419981635:android:f572392d0bdf2314766ff6",
+        "android_client_info": {
+          "package_name": "com.example.the_mechanic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "700419981635-30q2kiosstka4udeoguv2qi81pmce852.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.the_mechanic",
+            "certificate_hash": "3daca92fa719e3b9a066f3ab0f36214b3c358e0e"
+          }
+        },
+        {
+          "client_id": "700419981635-22snnkuqa1kp69q5jvvuafb7rnhcffk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR4FSxfzX0DIfxJkyPraoMSIQTQ1jer4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700419981635-22snnkuqa1kp69q5jvvuafb7rnhcffk5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "700419981635-ee6lgglle17ilk2bk0tlbkosscgb8kk6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "car.mechanic.the"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
