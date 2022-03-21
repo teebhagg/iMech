@@ -1,11 +1,9 @@
-import 'dart:developer';
-
 import 'package:auto_/main.dart';
 import 'package:auto_/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 
 class Services extends StatefulWidget {
   const Services({
@@ -25,22 +23,20 @@ class _ServicesState extends State<Services> {
     TextEditingController maxController = TextEditingController();
     TextEditingController priceController = TextEditingController();
 
-    Future<Map> addservices() async {
+    Future<List<Map<String, String>>> addservices() async {
       User? user = FirebaseAuth.instance.currentUser;
       DatabaseReference UserRef = FirebaseDatabase.instance
           .ref()
           .child('Mech, Auto and Tows')
           .child(user!.uid);
-      final add = await UserRef.child('Servies').set(serve = [
-        {
-          'name': nameController.text.trim(),
-          'start time': startController.text.trim(),
-          'end time': maxController.text.trim(),
-          'price': priceController.text.trim(),
-        }
-      ]);
-      print(add as Map);
-      return add as Map;
+      final add = await UserRef.child('Services').push().set({
+        'name': nameController.text.trim(),
+        'start time': startController.text.trim(),
+        'end time': maxController.text.trim(),
+        'price': priceController.text.trim(),
+      });
+      print(add as List<Map<String, String>>);
+      return add;
     }
 
     Future<Map> postservices() async {
@@ -49,9 +45,9 @@ class _ServicesState extends State<Services> {
           .ref()
           .child('Mech, Auto and Tows')
           .child(user!.uid);
-      final idsnapshot = await UserRef.child('Services').get();
-      print(idsnapshot);
-      return idsnapshot as Map;
+      final DataSnapshot idsnapshot = await UserRef.child('Services').get();
+      print(idsnapshot.value);
+      return idsnapshot.value as Map;
     }
 
     return Scaffold(
@@ -69,7 +65,7 @@ class _ServicesState extends State<Services> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SingleChildScrollView(
-                            padding: EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(12),
                             child: Column(
                               children: [
                                 Container(
@@ -98,7 +94,7 @@ class _ServicesState extends State<Services> {
                                     ),
                                   ),
                                 ),
-                                Divider(),
+                                const Divider(),
                                 Row(
                                   children: [
                                     Expanded(
@@ -131,7 +127,7 @@ class _ServicesState extends State<Services> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 20,
                                     ),
                                     Expanded(
@@ -166,7 +162,7 @@ class _ServicesState extends State<Services> {
                                     ),
                                   ],
                                 ),
-                                Divider(),
+                                const Divider(),
                                 Container(
                                   height: 60,
                                   decoration: ShapeDecoration(
@@ -193,7 +189,7 @@ class _ServicesState extends State<Services> {
                                     ),
                                   ),
                                 ),
-                                Divider()
+                                const Divider()
                               ],
                             ),
                           ),
@@ -215,12 +211,12 @@ class _ServicesState extends State<Services> {
                                     addservices();
                                     print('isadded');
                                     Navigator.pop(context);
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Mydialog(
-                                              message: "Serviced Added ");
-                                        });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Agree to Terms and Conditions to  Continue'),
+                                      ),
+                                    );
                                   } else {
                                     print('error');
                                   }
@@ -240,8 +236,8 @@ class _ServicesState extends State<Services> {
                 );
               });
         },
-        label: Text('Add'),
-        icon: Icon(Icons.add),
+        label: const Text('Add'),
+        icon: const Icon(Icons.add),
       ),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -274,65 +270,94 @@ class _ServicesState extends State<Services> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => Dismissible(
-                            direction: DismissDirection.endToStart,
-                            key: UniqueKey(),
-                            onDismissed: (direction) {
-                              setState(() {
-                                serve.removeAt(index);
-                              });
-                            },
-                            confirmDismiss: (DismissDirection direction) async {
-                              return await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Confirm"),
-                                    content: Text(
-                                        "Are you sure you wish to delete this item?"),
-                                    actions: [
-                                      FlatButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(true),
-                                        child: Text("DELETE"),
-                                      ),
-                                      FlatButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(false),
-                                        child: const Text("CANCEL"),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            background: Container(
-                              color: Colors.red,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(18.0),
-                                    child: Text('Delete',
-                                        style: TextStyle(color: Colors.white)),
-                                  )
-                                ],
-                              ),
-                            ),
-                            child: ServiceTile(
-                              serves: serve[index],
-                              int: index,
+                    shrinkWrap: true,
+                    itemCount:
+                        snapshot.data == null ? 0 : snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      final data = snapshot.data!.entries.toList();
+
+                      print(snapshot.data!.entries.toList()[index].value);
+                      return Dismissible(
+                          direction: DismissDirection.endToStart,
+                          key: UniqueKey(),
+                          onDismissed: (direction) {
+                            setState(() {
+                              snapshot.data!.remove(index);
+                            });
+                          },
+                          confirmDismiss: (DismissDirection direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Confirm"),
+                                  content: const Text(
+                                      "Are you sure you wish to delete this item?"),
+                                  actions: [
+                                    FlatButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                      child: const Text("DELETE"),
+                                    ),
+                                    FlatButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: const Text("CANCEL"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          background: Container(
+                            color: Colors.red,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: const [
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(18.0),
+                                  child: Text('Delete',
+                                      style: TextStyle(color: Colors.white)),
+                                )
+                              ],
                             ),
                           ),
-                      separatorBuilder: (context, index) => Divider(),
-                      itemCount: serve.length);
+                          child: Card(
+                            color: Colors.black,
+                            child: ListTile(
+                              title: Text(
+                                data[index].value['name'],
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 22),
+                              ),
+                              subtitle: Text(
+                                '${data[index].value['start time']} - ${data[index].value['end time']}',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              trailing: Text(
+                                data[index].value['price'],
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ));
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                  );
                 }
-                return Center(child: Text('No Service', style: TextStyle(color: Colors.white,),));
+                return const Center(
+                  child: Text(
+                    'No Service',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                );
               }),
         ]),
       ),
@@ -368,26 +393,23 @@ class ServiceTile extends StatelessWidget {
   }
 }
 
-// class ServicesLib {
-//   final String name;
-//   final String startTime;
-//   final String endTime;
-//   final String price;
+class ServicesLib {
+  String name;
+  String startTime;
+  String endTime;
+  String price;
 
-//   ServicesLib(this.name, this.startTime, this.endTime, this.price);
+  ServicesLib(
+      {required this.name,
+      required this.startTime,
+      required this.endTime,
+      required this.price});
+}
+
+// class ServeLib {
+//   List<ServeLib> serveLib;
+
+//   ServeLib({ required this.serveLib});
 // }
 
-List serve = [];
-
-// Future<void> postservices() async {
-//       User? user = FirebaseAuth.instance.currentUser;
-//       DatabaseReference UserRef = FirebaseDatabase.instance
-//           .ref()
-//           .child('Mech, Auto and Tows')
-//           .child(user!.uid);
-//       final idsnapshot = await UserRef.child('Services').get();
-//       print(idsnapshot.value);
-      // return idsnapshot.value as String;
-    // }
-
-// List tile = List.from(elements)
+// List<Map<String, String>> serve = [];

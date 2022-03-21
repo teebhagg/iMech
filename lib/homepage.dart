@@ -105,7 +105,7 @@ class HomePage extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Text(
-                        snapshot.data!,
+                        snapshot.data!.toUpperCase(),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 25,
